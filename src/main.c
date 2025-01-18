@@ -24,10 +24,10 @@ patcher_type_t choose_patcher(const char *patch_path)
 {
     patcher_type_t result;
     if (file_extension_matches(patch_path, IPS_FILE_EXT)) {
-        printf("Using IPS patcher...\n");
+        printf("Using IPS patcher.\n");
         result = IPS;
     } else if (file_extension_matches(patch_path, BPS_FILE_EXT)) {
-        printf("Using BPS patcher...\n");
+        printf("Using BPS patcher.\n");
         result = BPS;
     } else {
         printf("Could not choose a patcher from path %s.\n", patch_path);

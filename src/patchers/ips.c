@@ -8,8 +8,6 @@
 #include "error.h"
 #include "ips.h"
 
-#define DEBUG
-
 #ifdef DEBUG
 #define PEEK(source) (*source->data)
 #endif
