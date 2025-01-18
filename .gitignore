@@ -66,5 +66,7 @@ CMakeUserPresets.json
 
 .cmake/
 .direnv/
+.cache/
+
 flake.lock
 rom-patcher

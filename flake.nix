@@ -19,6 +19,7 @@
             cmake
             cmake-language-server
             pkg-config
+            valgrind
           ];
         };
       }
