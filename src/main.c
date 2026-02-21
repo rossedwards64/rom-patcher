@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
+constexpr const char USAGE[] = "Usage: %s [-pr]\n";
+
 typedef enum { IPS, BPS, NONE } patcher_type_t;
 
 bool file_extension_matches(const char *path, const char *expected)
@@ -22,22 +24,25 @@ bool file_extension_matches(const char *path, const char *expected)
 
 patcher_type_t choose_patcher(const char *patch_path)
 {
-    patcher_type_t result;
     if (file_extension_matches(patch_path, IPS_FILE_EXT)) {
         printf("Using IPS patcher.\n");
-        result = IPS;
+        return IPS;
     } else if (file_extension_matches(patch_path, BPS_FILE_EXT)) {
         printf("Using BPS patcher.\n");
-        result = BPS;
+        return BPS;
     } else {
         printf("Could not choose a patcher from path %s.\n", patch_path);
-        result = NONE;
+        return NONE;
     }
-    return result;
 }
 
 int main(int argc, char **argv)
 {
+    if (argc <= 1) {
+        fprintf(stderr, USAGE, argv[0]);
+        return EXIT_FAILURE;
+    }
+
     char *patch_path = nullptr;
     char *rom_path = nullptr;
     int opt;
@@ -51,10 +56,18 @@ int main(int argc, char **argv)
                 printf("ROM file is %s.\n", optarg);
                 rom_path = optarg;
                 break;
-            default:
-                fprintf(stderr, "Usage: %s [-pr]\n", argv[0]);
-                return EXIT_FAILURE;
+            default: fprintf(stderr, USAGE, argv[0]); return EXIT_FAILURE;
         }
+    }
+
+    if (patch_path == nullptr) {
+        printf("Patch path missing. Exiting.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (rom_path == nullptr) {
+        printf("ROM path missing. Exiting.\n");
+        return EXIT_FAILURE;
     }
 
     switch (choose_patcher(patch_path)) {

@@ -70,3 +70,4 @@ CMakeUserPresets.json
 
 flake.lock
 rom-patcher
+rom-patcher-test

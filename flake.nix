@@ -15,6 +15,7 @@
       {
         devShell = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
+            cunit
             clang-tools
             cmake
             cmake-language-server

@@ -10,6 +10,11 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(SOURCES src/main.c src/patchers/bps.c src/patchers/ips.c
+            src/patchers/error.h)
+set(TEST_LIBS src/patchers/bps.c src/patchers/ips.c)
+set(TESTS test/patchers/ips.c)
+
 add_compile_options(
   -Wall
   -Wpedantic
@@ -28,14 +33,28 @@ add_compile_options(
   -Winit-self
   $<$<CONFIG:Debug>:-fsanitize=address>
   $<$<CONFIG:Debug>:-fsanitize=undefined>
-  $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
+  $<$<CONFIG:Debug>:-fsanitize=leak>
   $<$<CONFIG:Debug>:-g3>)
 
 add_executable(rom-patcher src/main.c)
 
-target_sources(rom-patcher PRIVATE src/patchers/bps.c src/patchers/ips.c
-                                   src/patchers/error.h)
+target_sources(rom-patcher PRIVATE ${SOURCES})
 target_compile_definitions(rom-patcher PRIVATE $<$<CONFIG:Debug>:DEBUG>)
 target_link_options(
-  rom-patcher BEFORE PRIVATE $<$<CONFIG:Debug>:-fsanitize=address> PRIVATE
-  $<$<CONFIG:Debug>:-fsanitize=undefined>)
+  rom-patcher
+  BEFORE
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=undefined>
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=leak>)
+
+enable_testing()
+
+add_executable(rom-patcher-test ${TESTS} ${TEST_LIBS})
+target_link_options(
+  rom-patcher-test
+  BEFORE
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=address>
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=undefined>
+  PRIVATE $<$<CONFIG:Debug>:-fsanitize=leak>
+  PRIVATE -Wl,-lcunit)
+add_test(rom-patcher-test ${EXECUTABLE_OUTPUT_PATH}/rom-patcher-test)

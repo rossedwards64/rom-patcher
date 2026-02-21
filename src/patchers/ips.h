@@ -4,13 +4,16 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define IPS_HEADER "PATCH"
-#define IPS_FILE_EXT "ips"
-#define IPS_EOF "EOF"
-#define MAX_PATCH_SIZE 7340032
-#define MAX_ROM_SIZE = 2147483648
+constexpr const char IPS_HEADER[] = "PATCH";
+constexpr const char IPS_FILE_EXT[] = "ips";
+constexpr const char IPS_EOF[] = "EOF";
+constexpr uint32_t MAX_PATCH_SIZE = 7340032;
+constexpr uint32_t MAX_ROM_SIZE = 2147483648;
+constexpr uint16_t INITIAL_RECORD_CAPACITY = 1024;
 
 typedef struct {
+    uint64_t count;
+    ptrdiff_t idx;
     uint8_t *data;
 } source_t;
 
@@ -47,6 +50,8 @@ typedef struct {
     uint8_t *data;
 } ips_patcher_t;
 
+void read_patch(ips_patch_t *patch, source_t *source);
+void apply_patch(const char *rom_path);
 void do_ips_patch(const char *patch_path, const char *rom_path);
 
 #endif /* IPS_H */
